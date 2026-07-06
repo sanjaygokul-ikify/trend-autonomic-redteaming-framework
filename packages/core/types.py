@@ -15,8 +15,7 @@ class ThreatModelDB:
 
     def get_effectiveness(self, action: str, target: str) -> float:
         # Get the effectiveness of the action on the target from the threat model database
-        threat_model = self.threat_models.get((action, target))
-        if threat_model:
-            return threat_model['effectiveness']
+        if (action, target) in self.threat_models:
+            return self.threat_models[(action, target)]['effectiveness']
         else:
             return 0.0
