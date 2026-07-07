@@ -4,7 +4,6 @@ from typing import Dict, List
 from .types import KnowledgeGraph, ThreatModelDB
 from .exceptions import RedTeamingException, EngineException
 
-
 class MetaAgentController:
     def __init__(self, knowledge_graph: KnowledgeGraph, threat_model_db: ThreatModelDB):
         self.knowledge_graph = knowledge_graph
@@ -27,7 +26,7 @@ class MetaAgentController:
             return plan
         except Exception as e:
             self.logger.error('Error during attack planning: %s', e)
-            raise EngineException('Error during attack planning')
+            raise EngineException('Error during attack planning') from e
 
     def generate_actions(self, goal: Dict, knowledge_graph: KnowledgeGraph) -> List[Dict]:
         # Generate possible actions for the given goal based on the knowledge graph
@@ -48,6 +47,8 @@ class MetaAgentController:
 
     def select_best_action(self, evaluated_actions: List[Dict]) -> Dict:
         # Select the best action based on the effectiveness
+        if not evaluated_actions:
+            raise ValueError('No actions to select from')
         best_action = max(evaluated_actions, key=lambda x: x['effectiveness'])
         return best_action
 
