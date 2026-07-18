@@ -18,10 +18,16 @@ class MetaAgentController:
             for goal in threat_model['goals']:
                 # Generate possible actions for the current goal
                 actions = self.generate_actions(goal, self.knowledge_graph)
+                if not actions:
+                    self.logger.warning('No actions found for goal %s', goal['target'])
+                    continue
                 # Evaluate the effectiveness of each action
                 evaluated_actions = self.evaluate_actions(actions, self.threat_model_db)
                 # Select the best action for the current goal
                 best_action = self.select_best_action(evaluated_actions)
+                if best_action is None:
+                    self.logger.warning('No best action found for goal %s', goal['target'])
+                    continue
                 plan.append(best_action)
             return plan
         except Exception as e:
@@ -48,7 +54,7 @@ class MetaAgentController:
     def select_best_action(self, evaluated_actions: List[Dict]) -> Dict:
         # Select the best action based on the effectiveness
         if not evaluated_actions:
-            raise ValueError('No actions to select from')
+            return None
         best_action = max(evaluated_actions, key=lambda x: x['effectiveness'])
         return best_action
 
