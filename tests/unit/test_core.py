@@ -13,8 +13,9 @@ class TestCore(unittest.TestCase):
         self.assertEqual(effectiveness, 0.5)
 
     def test_meta_agent_controller(self) -> None:
-        knowledge_graph = KnowledgeGraph()
-        threat_model_db = ThreatModelDB()
+        knowledge_graph = KnowledgeGraph([{'target': 'example', 'action': 'action'}])
+        threat_model_db = ThreatModelDB({('action', 'example'): {'effectiveness': 0.5}})
         controller = MetaAgentController(knowledge_graph, threat_model_db)
         plan = controller.plan_attack({"goals": [{"target": "example"}]})
+        self.assertIsNotNone(plan)
         self.assertIsInstance(plan, list)
